@@ -7,7 +7,7 @@ export default function Navigation () {
     const [isOpen, setIsOpen] = useState(false);
     const [isOfferOpen, setIsOfferOpen] = useState(false);
     return (
-    <header className="w-full border-b border-white/10 bg-black">
+      <header className="w-full border-b border-white/10 bg-black text-white">
           <nav className="mx-auto flex max-w-[1600px] items-center justify-between px-[clamp(1.5rem,5vw,4rem)] py-4">
 
 
@@ -15,7 +15,7 @@ export default function Navigation () {
               SAINTS WORKOUTS
             </Link>
 
-            <div className="hidden items-center gap-6 lg:flex">
+            <div className="hidden items-center gap-6 text-white lg:flex">
                 <Link href="/" onClick={() => setIsOpen(false)} className="hover:text-neutral-400 transition-colors">
                   Home
                 </Link>
