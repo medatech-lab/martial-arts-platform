@@ -8,6 +8,8 @@ import {
 
 import { logoutAdmin } from "@/app/admin/login/actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminTrainingsPage() {
     const trainings = await prisma.training.findMany({
         orderBy: {
