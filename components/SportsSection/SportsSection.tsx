@@ -49,7 +49,10 @@ const sports = [
 
     export default function SportsSection() {
         return (
-            <section className="bg-neutral-950 pt-[clamp(1.5rem,2vw,2.5rem)] pb-[clamp(4rem,8vw,8rem)]">
+            <section id="sportarten"
+                className="bg-neutral-950 pt-[clamp(1.5rem,2vw,2.5rem)] pb-[clamp(4rem,8vw,8rem)]
+                scroll-mt-20"
+            >
                 <div className="mx-auto w-full max-w-[1600px] px-[clamp(1.5rem,5vw,4rem)]">
 
                     <div>

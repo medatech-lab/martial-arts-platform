@@ -1,10 +1,12 @@
+
 import Image from "next/image";
 import Link from "next/link";
 
 export default function HeroVisual() {
   return (
-    <div className="grid w-full place-items-center gap-2 lg:gap-4 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+    <div className="grid w-full min-w-0 place-items-center gap-2 lg:gap-4 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
 
+      {/* LINKE SPORTARTEN */}
       <div className="
         row-start-1
         col-start-1
@@ -15,33 +17,36 @@ export default function HeroVisual() {
         text-xs
         uppercase
         tracking-[0.15em]
-        sm:tracking-[0.2em] 
+        sm:tracking-[0.2em]
         lg:tracking-[0.3em]
-       text-neutral-300
-        lg:col-start-1  
+        text-neutral-300
+        lg:col-start-1
         lg:row-start-1
         lg:text-left
       ">
         <Link
           href="/angebot/kickboxen"
-          className="hover:text-white transition-colors">
-        <p>Kickboxen</p>
+          className="hover:text-white transition-colors"
+        >
+          <p>Kickboxen</p>
         </Link>
 
         <Link
           href="/angebot/jiu-jitsu"
-          className="hover:text-white transition-colors">
-        <p>Jiu-Jitsu</p>
+          className="hover:text-white transition-colors"
+        >
+          <p>Jiu-Jitsu</p>
         </Link>
 
         <Link
           href="/angebot/personal-training"
-          className="hover:text-white transition-colors">
-        <p>Personal-Training</p>
+          className="hover:text-white transition-colors"
+        >
+          <p>Personal-Training</p>
         </Link>
-
       </div>
 
+      {/* LOGO UND ELLIPSEN */}
       <div
         className="
           col-start-2
@@ -94,12 +99,11 @@ export default function HeroVisual() {
             z-10
             h-auto
             w-[clamp(70px,18vw,180px)]
-            
           "
         />
       </div>
 
-
+      {/* RECHTE SPORTARTEN */}
       <div className="
         col-start-3
         row-start-1
@@ -117,22 +121,27 @@ export default function HeroVisual() {
         lg:row-start-1
         lg:text-left
       ">
-
-        <Link href="/angebot/karate" className="hover:text-white transition-colors">
+        <Link
+          href="/angebot/karate"
+          className="hover:text-white transition-colors"
+        >
           Karate
         </Link>
 
-        <Link href="/angebot/judo" className="hover:text-white transition-colors">
+        <Link
+          href="/angebot/judo"
+          className="hover:text-white transition-colors"
+        >
           Judo
         </Link>
 
-        <Link href="/angebot/kids-workout" className="hover:text-white transition-colors">
-            Kids-Workout
+        <Link
+          href="/angebot/kids-workout"
+          className="hover:text-white transition-colors"
+        >
+          Kids-Workout
         </Link>
-
       </div>
-
-
     </div>
   );
 }

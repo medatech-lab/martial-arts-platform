@@ -1,3 +1,4 @@
+
 import PrimaryButton from "@/components/PrimaryButton";
 
 export default function HeroContent () {
@@ -22,5 +23,3 @@ export default function HeroContent () {
         </div>
     );
 }
-
-
