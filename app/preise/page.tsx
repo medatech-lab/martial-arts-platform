@@ -12,15 +12,15 @@ const groupPrices = [
   },
   {
     title: "Kinder & Jugendliche",
-    price: "20.–",
+    price: "25.–",
     description: "Pro Gruppentraining bis 15 Jahre",
     highlight: null,
   },
   {
     title: "10er-Abo",
-    price: "200.–",
-    description: "10 Gruppentrainings für CHF 20.– pro Einheit",
-    highlight: "CHF 100.– sparen",
+    price: "250.–",
+    description: "10 Gruppentrainings für nur CHF 25.– pro Einheit",
+    highlight: "Trainiere flexibel und spare",
   },
 ];
 
