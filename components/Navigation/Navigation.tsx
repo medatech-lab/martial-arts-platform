@@ -148,14 +148,14 @@ export default function Navigation () {
                     </Link>
 
                     <Link
-                    href="/angebot/Karate"
+                    href="/angebot/karate"
                     onClick={() => setIsOpen(false)}
                     >
                     Karate
                     </Link>
 
                     <Link
-                    href="/angebot/Judo"
+                    href="/angebot/judo"
                     onClick={() => setIsOpen(false)}
                     >
                     Judo
