@@ -139,6 +139,27 @@ export default function Navigation () {
                     >
                     Kids-Workout
                     </Link>
+
+                    <Link
+                    href="/angebot/personal-training"
+                    onClick={() => setIsOpen(false)}
+                    >
+                    Personal-Training
+                    </Link>
+
+                    <Link
+                    href="/angebot/Karate"
+                    onClick={() => setIsOpen(false)}
+                    >
+                    Karate
+                    </Link>
+
+                    <Link
+                    href="/angebot/Judo"
+                    onClick={() => setIsOpen(false)}
+                    >
+                    Judo
+                    </Link>
                 </div>
               )}
             
