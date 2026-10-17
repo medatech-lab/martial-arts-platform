@@ -134,12 +134,12 @@ export default async function AdminTrainingsPage() {
 
                     <div>
                         <label className="mb-2 block text-sm text-neutral-300">
-                            Trainer
+                            Trainingsort / Adresse
                         </label>
 
                         <div>
                             <label className="mb-2 block text-sm text-neutral-300">
-                                Trainingsort / Adresse
+                                Trainer
                             </label>
 
                             <input
@@ -154,6 +154,7 @@ export default async function AdminTrainingsPage() {
                             type="text"
                             name="trainer"
                             className="w-full rounded-md border border-white/20 bg-neutral-900 px-4 py-3"
+                            placeholder="Trainer-Name"
                         />
                     </div>
 
