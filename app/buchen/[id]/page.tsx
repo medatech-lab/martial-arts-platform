@@ -1,3 +1,4 @@
+import SubmitButton from "./SubmitButton";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { createBooking } from "./actions";
@@ -160,12 +161,8 @@ export default async function BookingPage({
                             />
                         </div>
 
-                        <button
-                            type="submit"
-                            className="rounded-md bg-white px-5 py-3 font-semibold text-black transition-colors hover:bg-neutral-300"
-                        >
-                         Verbindlich buchen
-                        </button>
+                        <SubmitButton />
+                        
                     </form>
                 )}
 
