@@ -1,30 +1,50 @@
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin-auth";
 import { revalidatePath } from "next/cache";
+import {
+    createTrainingDate,
+    getExactTrainingStart,
+} from "@/lib/training-time";
 
 export async function createTraining(formData: FormData) {
     await requireAdmin();
 
-    const sport = formData.get("sport") as string;
-    const date = formData.get("date") as string;
-    const startTime = formData.get("startTime") as string;
-    const endTime = formData.get("endTime") as string;
-    const trainer = formData.get("trainer") as string;
-    const location = formData.get("location") as string;
+    const sport = String(formData.get("sport") ?? "").trim();
+    const date = String(formData.get("date") ?? "").trim();
+    const startTime = String(formData.get("startTime") ?? "").trim();
+    const endTime = String(formData.get("endTime") ?? "").trim();
+    const trainer = String(formData.get("trainer") ?? "").trim();
+    const location = String(formData.get("location") ?? "").trim();
     const capacity = Number(formData.get("capacity"));
     const bookable = formData.get("bookable") === "on";
 
-    if (!sport || !date || !startTime || !endTime || capacity < 1) {
+    if (
+        !sport ||
+        !date ||
+        !startTime ||
+        !endTime ||
+        !Number.isSafeInteger(capacity) ||
+        capacity < 1
+    ) {
         throw new Error("Bitte alle Pflichtfelder ausfüllen.");
     }
+
+    const trainingDate = createTrainingDate(date);
+
+    const startsAt = getExactTrainingStart({
+        date: trainingDate,
+        startTime,
+    });
 
     await prisma.training.create({
         data: {
             sport,
-            date: new Date(`${date}T00:00:00`),
+            date: trainingDate,
             startTime,
+            startsAt,
             endTime,
             trainer: trainer || null,
             location: location || null,
@@ -42,7 +62,7 @@ export async function deleteTraining(formData: FormData) {
 
     const id = Number(formData.get("id"));
 
-    if (!id) {
+    if (!Number.isSafeInteger(id) || id <= 0) {
         throw new Error("Ungültige Training-ID.");
     }
 
@@ -62,7 +82,7 @@ export async function toggleTrainingBookable(formData: FormData) {
     const id = Number(formData.get("id"));
     const bookable = formData.get("bookable") === "true";
 
-    if (!id) {
+    if (!Number.isSafeInteger(id) || id <= 0) {
         throw new Error("Ungültige Training-ID.");
     }
 

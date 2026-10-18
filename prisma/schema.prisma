@@ -8,18 +8,19 @@ datasource db {
 }
 
 model Training {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   sport     String
   date      DateTime
   startTime String
+  startsAt  DateTime?
   endTime   String
   trainer   String?
   location  String?
   capacity  Int
-  bookable  Boolean  @default(true)
-  createdAt DateTime @default(now())
+  bookable  Boolean   @default(true)
+  createdAt DateTime  @default(now())
 
-  bookings Booking[]
+  bookings  Booking[]
 }
 
 model Booking {

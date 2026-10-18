@@ -7,15 +7,17 @@
     "build": "prisma generate --config prisma7.config.ts && next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma skills sync || exit 0"
+    "postinstall": "prisma skills sync || exit 0",
+    "start:railway": "prisma migrate deploy --config prisma7.config.ts && tsx -r dotenv/config lib/backfill-starts-at.ts && next start"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.10.0",
     "@prisma/client": "^7.10.0",
-    "next": "16.2.10",
+    "next": "16.4.2",
     "prisma": "^7.10.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "tsx": "^4.23.15"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
