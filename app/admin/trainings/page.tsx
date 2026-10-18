@@ -1,3 +1,4 @@
+
 import { prisma } from "@/lib/prisma";
 
 import {
@@ -23,6 +24,176 @@ export default async function AdminTrainingsPage() {
             },
         },
     });
+
+    const now = new Date();
+
+    const upcomingTrainings = trainings
+        .filter(
+            (training) =>
+                training.startsAt !== null &&
+                training.startsAt.getTime() > now.getTime()
+        )
+        .sort(
+            (a, b) =>
+                a.startsAt!.getTime() - b.startsAt!.getTime()
+        );
+
+    const pastTrainings = trainings
+        .filter(
+            (training) =>
+                training.startsAt === null ||
+                training.startsAt.getTime() <= now.getTime()
+        )
+        .sort(
+            (a, b) =>
+                (b.startsAt?.getTime() ?? b.date.getTime()) -
+                (a.startsAt?.getTime() ?? a.date.getTime())
+        );
+
+    function renderTrainings(
+        list: typeof trainings,
+        emptyMessage: string
+    ) {
+        if (list.length === 0) {
+            return (
+                <p className="mt-6 text-neutral-400">
+                    {emptyMessage}
+                </p>
+            );
+        }
+
+        return (
+            <div className="mt-8 space-y-10">
+                {list.map((training) => (
+                    <article
+                        key={training.id}
+                        className="rounded-xl border border-white/15 bg-neutral-900/40 p-6 sm:p-8"
+                    >
+                        <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+                            <div>
+                                <h3 className="text-xl font-bold uppercase">
+                                    {training.sport}
+                                </h3>
+
+                                <p className="mt-3 text-neutral-300">
+                                    {training.date.toLocaleDateString(
+                                        "de-CH",
+                                        {
+                                            timeZone: "UTC",
+                                            weekday: "long",
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                        }
+                                    )}
+                                </p>
+
+                                <p className="mt-1 text-neutral-400">
+                                    {training.startTime} –{" "}
+                                    {training.endTime}
+                                </p>
+
+                                {training.location && (
+                                    <p className="mt-2 text-sm text-neutral-400">
+                                        Ort: {training.location}
+                                    </p>
+                                )}
+
+                                {training.trainer && (
+                                    <p className="mt-1 text-sm text-neutral-400">
+                                        Trainer: {training.trainer}
+                                    </p>
+                                )}
+
+                                <p className="mt-3 text-sm font-semibold">
+                                    {training.bookings.length} /{" "}
+                                    {training.capacity} Teilnehmer
+                                </p>
+
+                                <p className="mt-1 text-sm text-neutral-300">
+                                    {training.bookable
+                                        ? "Buchbar"
+                                        : "Nicht buchbar"}
+                                </p>
+                            </div>
+
+                            <div className="flex flex-col gap-3 sm:items-end">
+                                <form action={toggleTrainingBookable}>
+                                    <input
+                                        type="hidden"
+                                        name="id"
+                                        value={training.id}
+                                    />
+
+                                    <input
+                                        type="hidden"
+                                        name="bookable"
+                                        value={String(training.bookable)}
+                                    />
+
+                                    <button
+                                        type="submit"
+                                        className="rounded-md border border-white/20 px-4 py-2 text-sm transition-colors hover:bg-white/10"
+                                    >
+                                        {training.bookable
+                                            ? "Buchung sperren"
+                                            : "Buchung freigeben"}
+                                    </button>
+                                </form>
+
+                                <form action={deleteTraining}>
+                                    <input
+                                        type="hidden"
+                                        name="id"
+                                        value={training.id}
+                                    />
+
+                                    <button
+                                        type="submit"
+                                        className="rounded-md border border-white/20 px-4 py-2 text-sm transition-colors hover:border-red-400/50 hover:bg-red-500/10 hover:text-red-300"
+                                    >
+                                        Löschen
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        {training.bookings.length > 0 && (
+                            <div className="mt-8 border-t border-white/10 pt-7">
+                                <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-neutral-400">
+                                    Teilnehmer
+                                </h4>
+
+                                <div className="mt-5 grid gap-4">
+                                    {training.bookings.map((booking) => (
+                                        <div
+                                            key={booking.id}
+                                            className="rounded-lg border border-white/5 bg-white/5 px-5 py-4"
+                                        >
+                                            <p className="font-semibold">
+                                                {booking.firstName}{" "}
+                                                {booking.lastName}
+                                            </p>
+
+                                            <p className="mt-1 text-sm text-neutral-400">
+                                                {booking.email}
+                                            </p>
+
+                                            {booking.phone && (
+                                                <p className="mt-1 text-sm text-neutral-400">
+                                                    {booking.phone}
+                                                </p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </article>
+                ))}
+            </div>
+        );
+    }
 
     return (
         <main className="min-h-screen bg-neutral-950 px-6 py-12 text-white">
@@ -68,23 +239,18 @@ export default async function AdminTrainingsPage() {
                             <option value="Jiu-Jitsu">
                                 Jiu-Jitsu
                             </option>
-
                             <option value="Kickboxen">
                                 Kickboxen
                             </option>
-
                             <option value="Kids-Workout">
                                 Kids-Workout
                             </option>
-
                             <option value="Personal Training">
                                 Personal Training
                             </option>
-
                             <option value="Karate">
                                 Karate
                             </option>
-
                             <option value="Judo">
                                 Judo
                             </option>
@@ -137,24 +303,24 @@ export default async function AdminTrainingsPage() {
                             Trainingsort / Adresse
                         </label>
 
-                        <div>
-                            <label className="mb-2 block text-sm text-neutral-300">
-                                Trainer
-                            </label>
+                        <input
+                            type="text"
+                            name="location"
+                            placeholder="z. B. Sporthalle, Musterstrasse 10, St. Gallen"
+                            className="w-full rounded-md border border-white/20 bg-neutral-900 px-4 py-3"
+                        />
+                    </div>
 
-                            <input
-                                type="text"
-                                name="location"
-                                placeholder="z. B. Sporthalle, Musterstrasse 10, St. Gallen"
-                                className="w-full rounded-md border border-white/20 bg-neutral-900 px-4 py-3"
-                            />
-                        </div>
+                    <div>
+                        <label className="mb-2 block text-sm text-neutral-300">
+                            Trainer
+                        </label>
 
                         <input
                             type="text"
                             name="trainer"
-                            className="w-full rounded-md border border-white/20 bg-neutral-900 px-4 py-3"
                             placeholder="Trainer-Name"
+                            className="w-full rounded-md border border-white/20 bg-neutral-900 px-4 py-3"
                         />
                     </div>
 
@@ -178,7 +344,6 @@ export default async function AdminTrainingsPage() {
                             name="bookable"
                             defaultChecked
                         />
-
                         <span>Training buchbar</span>
                     </label>
 
@@ -188,164 +353,29 @@ export default async function AdminTrainingsPage() {
                     >
                         Training erstellen
                     </button>
-
                 </form>
 
-
-                {/* Bestehende Trainings */}
+                {/* Bevorstehende Trainings */}
                 <section className="mt-20">
                     <h2 className="text-2xl font-bold">
-                        Bestehende Trainings
+                        Bevorstehende Trainings
                     </h2>
 
-                    {trainings.length === 0 ? (
-                        <p className="mt-6 text-neutral-400">
-                            Noch keine Trainings vorhanden.
-                        </p>
-                    ) : (
-                        <div className="mt-6">
-                            {trainings.map((training) => (
-                                <div
-                                    key={training.id}
-                                    className="border-t border-white/15 py-6"
-                                >
-                                    {/* Trainingsinformationen */}
-                                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    {renderTrainings(
+                        upcomingTrainings,
+                        "Aktuell sind keine bevorstehenden Trainings vorhanden."
+                    )}
+                </section>
 
-                                        <div>
-                                            <h3 className="text-xl font-bold uppercase">
-                                                {training.sport}
-                                            </h3>
+                {/* Zurückliegende Trainings */}
+                <section className="mt-20 border-t border-white/15 pt-12">
+                    <h2 className="text-2xl font-bold">
+                        Zurückliegende Trainings
+                    </h2>
 
-                                            <p className="mt-2 text-neutral-300">
-                                                {training.date.toLocaleDateString(
-                                                    "de-CH",
-                                                    {
-                                                        weekday: "long",
-                                                        day: "2-digit",
-                                                        month: "2-digit",
-                                                        year: "numeric",
-                                                    }
-                                                )}
-                                            </p>
-
-                                            <p className="text-neutral-400">
-                                                {training.startTime} –{" "}
-                                                {training.endTime}
-                                            </p>
-
-                                            {training.trainer && (
-                                                <p className="mt-1 text-sm text-neutral-400">
-                                                    Trainer:{" "}
-                                                    {training.trainer}
-                                                </p>
-                                            )}
-
-                                            <p className="mt-1 text-sm font-semibold">
-                                                {training.bookings.length} /{" "}
-                                                {training.capacity} Teilnehmer
-                                            </p>
-
-                                            <p className="mt-1 text-sm">
-                                                {training.bookable
-                                                    ? "Buchbar"
-                                                    : "Nicht buchbar"}
-                                            </p>
-                                        </div>
-
-                                        <div className="flex flex-col gap-2 sm:items-end">
-
-                                            {/* Buchung sperren / freigeben */}
-                                            <form
-                                                action={
-                                                    toggleTrainingBookable
-                                                }
-                                            >
-                                                <input
-                                                    type="hidden"
-                                                    name="id"
-                                                    value={training.id}
-                                                />
-
-                                                <input
-                                                    type="hidden"
-                                                    name="bookable"
-                                                    value={String(
-                                                        training.bookable
-                                                    )}
-                                                />
-
-                                                <button
-                                                    type="submit"
-                                                    className="rounded-md border border-white/20 px-4 py-2 text-sm transition-colors hover:bg-white/10"
-                                                >
-                                                    {training.bookable
-                                                        ? "Buchung sperren"
-                                                        : "Buchung freigeben"}
-                                                </button>
-                                            </form>
-
-                                            {/* Training löschen */}
-                                            <form action={deleteTraining}>
-                                                <input
-                                                    type="hidden"
-                                                    name="id"
-                                                    value={training.id}
-                                                />
-
-                                                <button
-                                                    type="submit"
-                                                    className="rounded-md border border-white/20 px-4 py-2 text-sm transition-colors hover:bg-white/10"
-                                                >
-                                                    Löschen
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-
-                                    {/* Teilnehmerliste */}
-                                    {training.bookings.length > 0 && (
-                                        <div className="mt-6 border-t border-white/10 pt-6">
-                                            <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-neutral-400">
-                                                Teilnehmer
-                                            </h4>
-
-                                            <div className="mt-4 grid gap-3">
-                                                {training.bookings.map(
-                                                    (booking) => (
-                                                        <div
-                                                            key={booking.id}
-                                                            className="rounded-md bg-white/5 px-4 py-3"
-                                                        >
-                                                            <p className="font-semibold">
-                                                                {
-                                                                    booking.firstName
-                                                                }{" "}
-                                                                {
-                                                                    booking.lastName
-                                                                }
-                                                            </p>
-
-                                                            <p className="mt-1 text-sm text-neutral-400">
-                                                                {booking.email}
-                                                            </p>
-
-                                                            {booking.phone && (
-                                                                <p className="text-sm text-neutral-400">
-                                                                    {
-                                                                        booking.phone
-                                                                    }
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                    )
-                                                )}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
+                    {renderTrainings(
+                        pastTrainings,
+                        "Keine zurückliegenden Trainings vorhanden."
                     )}
                 </section>
 
