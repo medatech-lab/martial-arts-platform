@@ -63,6 +63,12 @@ export default async function ConfirmationPage({
                                 Trainer: {training.trainer}
                             </p>
                         )}
+
+                        {training.location && (
+                            <p className="mt-1 text-neutral-400">
+                                Ort: {training.location}
+                            </p>
+                        )}
                     </div>
 
                     <div className="mt-10 flex flex-col gap-4 sm:flex-row">
