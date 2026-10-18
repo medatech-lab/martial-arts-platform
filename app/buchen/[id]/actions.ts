@@ -4,7 +4,7 @@
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { isUpcomingTraining } from "@/lib/training-time";
+import { sendEmail } from "@/lib/mail";
 
 export async function createBooking(trainingId: number, formData: FormData) {
     const firstName = String(formData.get("firstName") ?? "").trim();
@@ -23,8 +23,10 @@ export async function createBooking(trainingId: number, formData: FormData) {
     const training = await prisma.training.findUnique({
         where: { id: trainingId },
         select: {
+            sport: true,
             date: true,
             startTime: true,
+            location: true,
             startsAt: true,
         },
     });
@@ -109,6 +111,43 @@ export async function createBooking(trainingId: number, formData: FormData) {
 
         throw new Error(
             "Die Buchung konnte nicht gespeichert werden. Bitte erneut versuchen."
+        );
+    }
+
+    // Bestätigung erst nach erfolgreicher Buchung verschicken.
+    try {
+        const date = training.date.toLocaleDateString("de-CH", {
+            timeZone: "UTC",
+            weekday: "long",
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
+
+        await sendEmail(
+            email,
+            "Buchungsbestätigung – Saints Workouts",
+            `Hallo ${firstName}!
+
+Vielen Dank für deine Buchung bei Saints Workouts.
+
+Deine Buchung wurde erfolgreich bestätigt.
+
+Training: ${training.sport}
+Datum: ${date}
+Uhrzeit: ${training.startTime}
+Ort: ${training.location}
+
+Wir freuen uns auf dich!
+
+Sportliche Grüsse
+Dein Saints Workouts Team`
+        );
+    } catch (error) {
+        // Eine fehlgeschlagene E-Mail darf die Buchung nicht rückgängig machen.
+        console.error(
+            "Buchung gespeichert, E-Mail-Versand fehlgeschlagen:",
+            error
         );
     }
 
